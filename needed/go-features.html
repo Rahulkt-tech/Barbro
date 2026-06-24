@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Barbro — Redirecting…</title>
+<script>
+  (function () {
+    var target = "/features.html" + (window.location.search || "");
+    window.location.replace(target);
+  })();
+</script>
+</head>
+<body style="background:#000;color:#C9A84C;font-family:sans-serif;text-align:center;padding:4rem;">
+  <p>Opening Features &amp; Booking…</p>
+  <p><a href="/features.html" id="fallback" style="color:#E8C97A;">Click here if you are not redirected</a></p>
+  <script>
+    document.getElementById("fallback").href = "/features.html" + (window.location.search || "");
+  </script>
+</body>
+</html>

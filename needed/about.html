@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Barbro — About Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .about-page { min-height: 100vh; background: #000; padding: 7rem 2rem 5rem; }
+
+  /* ── Header ── */
+  .about-header { text-align: center; margin-bottom: 3.5rem; }
+  .about-eyebrow { font-size: 0.62rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .about-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.5rem); color: var(--white); margin-bottom: 1.5rem; }
+  .about-rule { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 0 auto; }
+
+  /* ── Video ── */
+  .about-video-wrap {
+    max-width: 960px;
+    margin: 0 auto 4rem;
+    position: relative;
+    border: 1px solid var(--border);
+    background: #000;
+    overflow: hidden;
+  }
+  .about-video-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.6);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .about-video {
+    width: 100%;
+    display: block;
+    max-height: 540px;
+    object-fit: cover;
+    background: #000;
+  }
+  /* Gold corner accents */
+  .about-video-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    z-index: 2;
+  }
+  .video-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    z-index: 2;
+  }
+  .video-corner-tl { top: 0; left: 0; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .video-corner-tr { top: 0; right: 0; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+  .video-corner-bl { bottom: 0; left: 0; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .video-corner-br { bottom: 0; right: 0; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+
+  /* ── Content ── */
+  .about-content-wrap {
+    max-width: 820px;
+    margin: 0 auto 5rem;
+    text-align: center;
+  }
+  .about-quote-mark {
+    font-family: var(--font-serif);
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.25;
+    line-height: 0.6;
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+  .about-body {
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    color: var(--grey-1);
+    line-height: 2;
+    letter-spacing: 0.02em;
+  }
+  .about-body strong {
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .about-body em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--white);
+  }
+
+  /* ── Stats row ── */
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    max-width: 820px;
+    margin: 3.5rem auto 0;
+  }
+  .stat-box {
+    background: var(--surface);
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+  .stat-number {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-3);
+  }
+
+  @media (max-width: 600px) {
+    .about-stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo" style="text-decoration:none;color:inherit;">BARBRO</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Login</a></li>
+    <li><a href="services.html" class="nav-link">Services</a></li>
+    <li><a href="location.html" class="nav-link">Location</a></li>
+    <li><a href="features.html" class="nav-link">Features</a></li>
+    <li><a href="about.html" class="nav-link active">About</a></li>
+  </ul>
+  <a href="booking.html" class="btn-gold nav-cta">Book Now</a>
+</nav>
+
+<div class="about-page">
+
+  <!-- Header -->
+  <div class="about-header">
+    <p class="about-eyebrow">Our Story</p>
+    <h1 class="about-title">About Us</h1>
+    <div class="about-rule"></div>
+  </div>
+
+  <!-- Video -->
+  <div class="about-video-wrap">
+    <div class="video-corner video-corner-tl"></div>
+    <div class="video-corner video-corner-tr"></div>
+    <div class="video-corner video-corner-bl"></div>
+    <div class="video-corner video-corner-br"></div>
+    <video
+      class="about-video"
+      src="IMG_7329.MP4"
+      controls
+      autoplay
+      muted
+      loop
+      playsinline
+    >
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- Content -->
+  <div class="about-content-wrap">
+    <span class="about-quote-mark">&ldquo;</span>
+    <p class="about-body">
+      Welcome to <strong>Barbro</strong> — where <em>cutting-edge technology</em> meets the art of personal grooming.
+      We believe that changing your look shouldn't feel like a gamble, and finding the right stylist
+      shouldn't feel like a chore. <strong>Barbro</strong> is an all-in-one platform engineered to streamline
+      your entire grooming journey, from the <em>first spark of inspiration</em> to the
+      <em>final snip of the scissors.</em>
+    </p>
+
+    <!-- Stats -->
+    <div class="about-stats">
+      <div class="stat-box">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">Studio Locations</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">2018</div>
+        <div class="stat-label">Est. San Francisco</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">10k+</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-logo">BARBRO</div>
+  <p class="footer-tagline">Precision. Craft. Ritual.</p>
+  <div class="footer-links">
+    <a href="#">Instagram</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="about.html">About</a>
+  </div>
+  <p class="footer-copy">&#169; 2026 Barbro Studio. San Francisco, CA.</p>
+</footer>
+
+</body>
+</html>

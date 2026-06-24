@@ -1,0 +1,13 @@
+[client]
+showErrorDetails = true
+
+[server]
+port = 8503
+headless = true
+enableCORS = true
+enableXsrfProtection = false
+# Served at /locator/ — proxied through node server (port 3000) for location.html
+baseUrlPath = "locator"
+
+[browser]
+gatherUsageStats = false

@@ -1,0 +1,14 @@
+{
+  "name": "barbro",
+  "version": "1.0.0",
+  "description": "Barbro salon site with customer and shop owner authentication",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "locator": "streamlit run app.py"
+  },
+  "dependencies": {
+    "http-proxy": "^1.18.1",
+    "sqlite3": "^5.1.6"
+  }
+}

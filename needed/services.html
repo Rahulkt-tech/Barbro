@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Barbro — Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo"><a href="index.html" style="text-decoration:none;color:inherit;">BARBRO</a></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Login</a></li>
+    <li><a href="about.html" class="nav-link">About us</a></li>
+  </ul>
+</nav>
+
+<section class="section section-services" style="padding-top:8rem;">
+  <div class="section-header">
+    <p class="section-eyebrow">Our Craft</p>
+    <h2 class="section-title">Signature Services</h2>
+    <div class="gold-rule"></div>
+    <p class="section-subtitle">Choose a service to find the nearest Barbro studio.</p>
+  </div>
+  <div class="services-grid">
+
+    <div class="service-card" onclick="goToLocation('Unisex Salons')" style="cursor:pointer;">
+      <div class="service-img service-img-1">
+        <div class="service-img-overlay"></div>
+        <span class="service-number">01</span>
+      </div>
+      <div class="service-body">
+        <p class="service-category">Unisex Salons</p>
+        <h3 class="service-name">The Art of Genderless Style</h3>
+        <p class="service-desc">Sophisticated grooming tailored to every individual. From avant-garde transformations to classic precision, our master stylists blend technical mastery with your personal aesthetic for a look that transcends boundaries.</p>
+        <div class="service-footer">
+          <a href="location.html?service=Unisex+Salons" class="btn-outline-gold">Find a Studio</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" onclick="goToLocation('Beauty Parlour')" style="cursor:pointer;">
+      <div class="service-img service-img-2">
+        <div class="service-img-overlay"></div>
+        <span class="service-number">02</span>
+      </div>
+      <div class="service-body">
+        <p class="service-category">Beauty Parlour</p>
+        <h3 class="service-name">Radiance Refined</h3>
+        <p class="service-desc">A sanctuary for skin and soul. Indulge in bespoke facials, advanced dermatological treatments, and luxury makeup artistry. We combine premium botanical extracts with modern science to unveil your most luminous self.</p>
+        <div class="service-footer">
+          <a href="location.html?service=Beauty+Parlour" class="btn-outline-gold">Find a Studio</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" onclick="goToLocation('Pet Grooming')" style="cursor:pointer;">
+      <div class="service-img service-img-3">
+        <div class="service-img-overlay"></div>
+        <span class="service-number">03</span>
+      </div>
+      <div class="service-body">
+        <p class="service-category">Pet Grooming</p>
+        <h3 class="service-name">The Elite Canine Suite</h3>
+        <p class="service-desc">Because elegance should extend to your companions. Our master groomers provide gentle, high-fashion styling, hydrotherapy baths, and breed-specific sculpting in a calm, stress-free environment.</p>
+        <div class="service-footer">
+          <a href="location.html?service=Pet+Grooming" class="btn-outline-gold">Find a Studio</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" onclick="window.location.href='shopping.html'" style="cursor:pointer;">
+      <div class="service-img service-img-4">
+        <div class="service-img-overlay"></div>
+        <span class="service-number">04</span>
+      </div>
+      <div class="service-body">
+        <p class="service-category">Shopping</p>
+        <h3 class="service-name">The Intelligent Apothecary</h3>
+        <p class="service-desc">Bring the Barbro ritual home with our curated selection of professional-grade serums and artisanal pomades. Use our integrated Smart Price Concierge to instantly compare values across Amazon, Flipkart, and elite beauty retailers.</p>
+        <div class="service-footer">
+          <a href="shopping.html" class="btn-gold">Shop Now</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">BARBRO</div>
+  <p class="footer-tagline">Precision. Craft. Ritual.</p>
+  <div class="footer-links">
+    <a href="#">Instagram</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
+  </div>
+  <p class="footer-copy">&#169; 2026 Barbro Studio. San Francisco, CA.</p>
+</footer>
+
+<script>
+function goToLocation(service) {
+  window.location.href = 'location.html?service=' + encodeURIComponent(service);
+}
+</script>
+<script src="app.js"></script>
+</body>
+</html>

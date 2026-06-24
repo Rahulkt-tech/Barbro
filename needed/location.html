@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Barbro — Location</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .locator-redirect-box {
+    max-width: 520px;
+    margin: 6rem auto 4rem;
+    text-align: center;
+    padding: 3rem 2rem;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+  }
+  .locator-spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1.5rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo"><a href="index.html" style="text-decoration:none;color:inherit;">BARBRO</a></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Login</a></li>
+    <li><a href="about.html" class="nav-link">About us</a></li>
+  </ul>
+</nav>
+
+<section class="section section-location" style="padding-top:8rem;background:var(--surface);min-height:70vh;">
+  <div class="locator-redirect-box" id="redirect-box">
+    <div class="locator-spinner"></div>
+    <p style="color:var(--grey-2);">Opening Smart Salon Locator…</p>
+    <p style="font-size:0.75rem;color:var(--grey-3);margin-top:1rem;">
+      <a href="#" id="manual-locator-link" style="color:var(--gold);">Click here</a> if nothing happens.
+    </p>
+    <div id="offline-hint" style="display:none;margin-top:1.5rem;">
+      <p style="color:var(--grey-2);font-size:0.85rem;">Start Streamlit first:</p>
+      <p><code style="color:var(--gold);">streamlit run app.py</code></p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var locatorUrl = "http://localhost:8501/locator";
+  if (params.get("service")) locatorUrl += "?service=" + encodeURIComponent(params.get("service"));
+
+  var manual = document.getElementById("manual-locator-link");
+  manual.href = locatorUrl;
+
+  fetch("http://localhost:8501/locator/_stcore/health")
+    .then(function (r) {
+      if (r.ok) {
+        window.location.replace(locatorUrl);
+      } else {
+        throw new Error("offline");
+      }
+    })
+    .catch(function () {
+      document.getElementById("offline-hint").style.display = "block";
+      manual.textContent = "Open locator in new tab";
+      manual.target = "_blank";
+    });
+})();
+</script>
+</body>
+</html>

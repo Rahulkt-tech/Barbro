@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Barbro — Smart Price Concierge</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .shop-page { min-height: 100vh; background: #000; padding: 7rem 2rem 5rem; }
+
+  /* Header */
+  .shop-header { text-align: center; margin-bottom: 3.5rem; }
+  .shop-eyebrow { font-size: 0.62rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .shop-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); color: var(--white); margin-bottom: 1.5rem; }
+  .shop-rule { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 0 auto 1.2rem; }
+  .shop-subtitle { font-size: 0.85rem; color: var(--grey-2); max-width: 520px; margin: 0 auto; line-height: 1.8; }
+
+  /* Search */
+  .search-section { display: flex; gap: 0; max-width: 780px; margin: 0 auto 3rem; border: 1px solid var(--border); background: rgba(255,255,255,0.03); }
+  .search-icon { padding: 0 1.2rem; color: var(--gold); font-size: 1rem; display: flex; align-items: center; flex-shrink: 0; }
+  #product-search { flex: 1; background: transparent; border: none; outline: none; color: var(--white); font-family: var(--font-sans); font-size: 0.88rem; padding: 1.1rem 0.5rem; letter-spacing: 0.03em; }
+  #product-search::placeholder { color: var(--grey-3); }
+  #search-btn { background: linear-gradient(135deg, #C9A84C, #E8C97A); color: #000; border: none; font-family: var(--font-sans); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; padding: 1.1rem 2rem; cursor: pointer; flex-shrink: 0; transition: all 0.3s; }
+  #search-btn:hover { filter: brightness(1.1); }
+  #search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Quick tags */
+  .quick-tags { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; margin-bottom: 3rem; }
+  .quick-tag { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.4rem 1rem; border: 1px solid var(--border); color: var(--grey-3); cursor: pointer; transition: all 0.2s; background: none; font-family: var(--font-sans); }
+  .quick-tag:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Winner banner */
+  #best-deal-banner { background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(232,201,122,0.08)); border: 1px solid var(--gold); padding: 2rem; margin-bottom: 2.5rem; max-width: 780px; margin-left: auto; margin-right: auto; display: none; }
+  #best-deal-banner.visible { display: block; }
+  .winner-badge { font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .winner-badge::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--gold); }
+  .winner-badge::after  { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--gold); }
+  #winner-content h2 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--white); margin-bottom: 0.3rem; }
+  #winner-content p  { font-size: 0.8rem; color: var(--grey-2); margin-bottom: 0.8rem; }
+  #winner-content h3 { font-family: var(--font-serif); font-size: 2rem; color: var(--gold); margin-bottom: 1rem; }
+  .winner-buy { display: inline-block; background: linear-gradient(135deg, #C9A84C, #E8C97A); color: #000; font-family: var(--font-sans); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.75rem 1.8rem; text-decoration: none; transition: all 0.3s; }
+  .winner-buy:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+  /* Platforms grid */
+  .platforms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); max-width: 780px; margin: 0 auto; }
+  .platform-column { background: var(--surface); padding: 0; }
+  .platform-head { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.8rem; }
+  .platform-logo { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; flex-shrink: 0; }
+  .platform-logo.amazon  { background: #FF9900; color: #000; }
+  .platform-logo.flipkart { background: #2874F0; color: #fff; }
+  .platform-name { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); }
+  .platform-count { font-size: 0.6rem; color: var(--grey-3); margin-left: auto; }
+
+  /* Result cards */
+  .results-list { padding: 0; }
+  .item-card { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s; cursor: pointer; text-decoration: none; }
+  .item-card:last-child { border-bottom: none; }
+  .item-card:hover { background: var(--surface-2); }
+  .item-card-info { flex: 1; min-width: 0; }
+  .item-card-brand { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.2rem; }
+  .item-card-name { font-size: 0.78rem; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+  .item-card-rating { font-size: 0.62rem; color: var(--grey-3); margin-top: 0.2rem; }
+  .item-card-price { font-family: var(--font-serif); font-size: 1.1rem; color: #4caf7d; flex-shrink: 0; margin-left: 1rem; }
+  .item-card-price.best { color: var(--gold); }
+
+  /* Empty / loading states */
+  .state-msg { padding: 2.5rem 1.5rem; text-align: center; font-size: 0.75rem; color: var(--grey-3); letter-spacing: 0.08em; }
+  .loading-dots { display: inline-flex; gap: 4px; }
+  .loading-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: dot-bounce 1.2s infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot-bounce { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+
+  @media (max-width: 640px) {
+    .platforms-grid { grid-template-columns: 1fr; }
+    .search-section { flex-wrap: wrap; }
+    #search-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">BARBRO</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Login</a></li>
+    <li><a href="about.html" class="nav-link">About us</a></li>
+  </ul>
+  <a href="index.html" class="btn-outline-gold nav-cta" style="font-size:0.65rem;">&#8592; Back</a>
+</nav>
+
+<div class="shop-page">
+
+  <div class="shop-header">
+    <p class="shop-eyebrow">The Intelligent Apothecary</p>
+    <h1 class="shop-title">Smart Price Concierge</h1>
+    <div class="shop-rule"></div>
+    <p class="shop-subtitle">Search any grooming product and instantly compare prices across Amazon and Flipkart. We surface the best deal so you never overpay.</p>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-section">
+    <span class="search-icon">&#x1F50D;</span>
+    <input type="text" id="product-search" placeholder="Search a product (e.g. Vitamin C Serum, Beard Oil, Hair Pomade)..."/>
+    <button id="search-btn">Find Best Price</button>
+  </div>
+
+  <!-- Quick search tags -->
+  <div class="quick-tags">
+    <button class="quick-tag" onclick="quickSearch('Vitamin C Serum')">Vitamin C Serum</button>
+    <button class="quick-tag" onclick="quickSearch('Beard Oil')">Beard Oil</button>
+    <button class="quick-tag" onclick="quickSearch('Hair Pomade')">Hair Pomade</button>
+    <button class="quick-tag" onclick="quickSearch('Moisturiser SPF')">Moisturiser SPF</button>
+    <button class="quick-tag" onclick="quickSearch('Shaving Cream')">Shaving Cream</button>
+    <button class="quick-tag" onclick="quickSearch('Scalp Serum')">Scalp Serum</button>
+  </div>
+
+  <!-- Best deal banner -->
+  <div id="best-deal-banner">
+    <div class="winner-badge">&#x1F3C6;&nbsp; Top Valued Deal</div>
+    <div id="winner-content"></div>
+  </div>
+
+  <!-- Results grid -->
+  <div class="platforms-grid">
+    <div class="platform-column">
+      <div class="platform-head">
+        <div class="platform-logo amazon">amz</div>
+        <span class="platform-name">Amazon India</span>
+        <span class="platform-count" id="amazon-count"></span>
+      </div>
+      <div id="amazon-results" class="results-list">
+        <div class="state-msg">Search a product to see results</div>
+      </div>
+    </div>
+    <div class="platform-column">
+      <div class="platform-head">
+        <div class="platform-logo flipkart">fk</div>
+        <span class="platform-name">Flipkart</span>
+        <span class="platform-count" id="flipkart-count"></span>
+      </div>
+      <div id="flipkart-results" class="results-list">
+        <div class="state-msg">Search a product to see results</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-logo">BARBRO</div>
+  <p class="footer-tagline">Precision. Craft. Ritual.</p>
+  <p class="footer-copy">&#169; 2026 Barbro Studio. San Francisco, CA.</p>
+</footer>
+
+<script>
+// ── Product database (curated grooming catalogue) ────────────
+const PRODUCTS = {
+  "vitamin c serum": [
+    { brand:"Minimalist", name:"Vitamin C 10% Face Serum 30ml", price:349,  rating:"4.3 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=minimalist+vitamin+c+serum" },
+    { brand:"Dot & Key",  name:"Vitamin C + E Serum 20ml",      price:425,  rating:"4.1 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=dot+key+vitamin+c+serum" },
+    { brand:"Plum",       name:"15% Vitamin C Serum 30ml",      price:595,  rating:"4.4 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=plum+vitamin+c+serum" },
+    { brand:"Minimalist", name:"Vitamin C 10% Face Serum 30ml", price:369,  rating:"4.2 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=minimalist+vitamin+c+serum" },
+    { brand:"Mamaearth",  name:"Vitamin C Face Serum 30ml",     price:299,  rating:"4.0 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=mamaearth+vitamin+c+serum" },
+    { brand:"Wow Skin",   name:"Vitamin C Brightening Serum",   price:449,  rating:"4.2 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=wow+vitamin+c+serum" },
+  ],
+  "beard oil": [
+    { brand:"Beardo",        name:"Godfather Beard & Hair Oil 30ml", price:249, rating:"4.4 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=beardo+beard+oil" },
+    { brand:"Ustraa",        name:"Beard Growth Oil 35ml",           price:299, rating:"4.3 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=ustraa+beard+oil" },
+    { brand:"The Man Co.",   name:"Argan Beard Oil 30ml",            price:349, rating:"4.5 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=the+man+company+beard+oil" },
+    { brand:"Beardo",        name:"Godfather Beard Oil 30ml",        price:239, rating:"4.3 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=beardo+beard+oil" },
+    { brand:"Bombay Shaving",name:"Beard Oil Conditioning 30ml",     price:275, rating:"4.2 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=bombay+shaving+beard+oil" },
+    { brand:"Ustraa",        name:"Beard Growth Oil 35ml",           price:289, rating:"4.4 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=ustraa+beard+oil" },
+  ],
+  "hair pomade": [
+    { brand:"Gatsby",  name:"Moving Rubber Spiky Edge 80g",  price:299, rating:"4.2 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=gatsby+hair+pomade" },
+    { brand:"Ustraa",  name:"Hair Wax Strong Hold 100g",     price:249, rating:"4.1 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=ustraa+hair+wax" },
+    { brand:"Beardo",  name:"Hair Wax Matte Finish 75g",     price:275, rating:"4.3 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=beardo+hair+wax" },
+    { brand:"Gatsby",  name:"Moving Rubber Spiky Edge 80g",  price:285, rating:"4.1 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=gatsby+hair+pomade" },
+    { brand:"Set Wet", name:"Vertical Hold Hair Wax 75g",    price:149, rating:"3.9 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=set+wet+hair+wax" },
+    { brand:"Ustraa",  name:"Hair Wax Strong Hold 100g",     price:239, rating:"4.2 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=ustraa+hair+wax" },
+  ],
+  "moisturiser spf": [
+    { brand:"Minimalist", name:"SPF 50 Sunscreen PA++++ 50ml",  price:399, rating:"4.5 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=minimalist+spf+50" },
+    { brand:"Neutrogena", name:"Ultra Sheer SPF 50+ 88ml",      price:549, rating:"4.4 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=neutrogena+spf+50" },
+    { brand:"Lakme",      name:"Sun Expert SPF 50 PA+++ 50ml",  price:299, rating:"4.1 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=lakme+sun+expert" },
+    { brand:"Minimalist", name:"SPF 50 Sunscreen 50ml",         price:379, rating:"4.4 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=minimalist+spf+50" },
+    { brand:"Mamaearth",  name:"Ultra Light SPF 50 80ml",       price:349, rating:"4.2 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=mamaearth+spf+50" },
+    { brand:"Biotique",   name:"Bio Sandalwood SPF 50+ 50g",    price:199, rating:"3.8 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=biotique+spf+50" },
+  ],
+  "shaving cream": [
+    { brand:"Bombay Shaving", name:"Shaving Cream Sensitive 100g",      price:249, rating:"4.4 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=bombay+shaving+cream" },
+    { brand:"Gillette",       name:"Sensitive Shave Gel 200ml",          price:299, rating:"4.3 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=gillette+shave+gel" },
+    { brand:"Ustraa",         name:"Shaving Cream Activated Charcoal",   price:199, rating:"4.2 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=ustraa+shaving+cream" },
+    { brand:"Bombay Shaving", name:"Shaving Cream 100g",                 price:235, rating:"4.3 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=bombay+shaving+cream" },
+    { brand:"Park Avenue",    name:"Shaving Cream Cool Blue 70g",        price:99,  rating:"3.9 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=park+avenue+shaving+cream" },
+    { brand:"Gillette",       name:"Sensitive Shave Gel 200ml",          price:279, rating:"4.2 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=gillette+shave+gel" },
+  ],
+  "scalp serum": [
+    { brand:"Minimalist", name:"5% Minoxidil Hair Serum 60ml", price:699, rating:"4.3 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=minimalist+minoxidil+serum" },
+    { brand:"Traya",      name:"Hair Ras Scalp Serum 50ml",    price:849, rating:"4.4 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=traya+scalp+serum" },
+    { brand:"Wow Skin",   name:"Onion Scalp Serum 100ml",      price:499, rating:"4.1 ★", platform:"Amazon",  link:"https://www.amazon.in/s?k=wow+scalp+serum" },
+    { brand:"Minimalist", name:"5% Minoxidil Hair Serum 60ml", price:679, rating:"4.2 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=minimalist+minoxidil" },
+    { brand:"Mamaearth",  name:"Onion Hair Serum 100ml",       price:349, rating:"4.0 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=mamaearth+onion+serum" },
+    { brand:"Wow Skin",   name:"Onion Scalp Serum 100ml",      price:479, rating:"4.1 ★", platform:"Flipkart",link:"https://www.flipkart.com/search?q=wow+onion+serum" },
+  ]
+};
+
+// ── Search logic ─────────────────────────────────────────────
+function getFullPriceComparison(query) {
+  const key = query.toLowerCase().trim();
+  let matched = null, bestScore = 0;
+  for (const k of Object.keys(PRODUCTS)) {
+    const score = k.split(' ').filter(w => key.includes(w)).length;
+    if (score > bestScore) { bestScore = score; matched = k; }
+  }
+  if (!matched || bestScore === 0) return null;
+  const deals = PRODUCTS[matched];
+  const bestDeal = [...deals].sort((a,b) => a.price - b.price)[0];
+  return { allDeals: deals, bestDeal };
+}
+
+function displayResults(data) {
+  const amazonList    = document.getElementById('amazon-results');
+  const flipkartList  = document.getElementById('flipkart-results');
+  const winnerBanner  = document.getElementById('best-deal-banner');
+  const winnerContent = document.getElementById('winner-content');
+  const amazonCount   = document.getElementById('amazon-count');
+  const flipkartCount = document.getElementById('flipkart-count');
+
+  amazonList.innerHTML = flipkartList.innerHTML = '';
+
+  const amazonDeals   = data.allDeals.filter(d => d.platform === 'Amazon');
+  const flipkartDeals = data.allDeals.filter(d => d.platform === 'Flipkart');
+  const lowestPrice   = data.bestDeal.price;
+
+  amazonCount.textContent   = amazonDeals.length   + ' results';
+  flipkartCount.textContent = flipkartDeals.length + ' results';
+
+  function renderDeals(deals, container) {
+    if (!deals.length) { container.innerHTML = '<div class="state-msg">No results found</div>'; return; }
+    deals.forEach(deal => {
+      const isBest = deal.price === lowestPrice;
+      container.innerHTML += `
+        <a class="item-card" href="${deal.link}" target="_blank" rel="noopener">
+          <div class="item-card-info">
+            <div class="item-card-brand">${deal.brand}</div>
+            <div class="item-card-name">${deal.name}</div>
+            <div class="item-card-rating">${deal.rating}</div>
+          </div>
+          <div class="item-card-price${isBest ? ' best' : ''}">&#8377;${deal.price}</div>
+        </a>`;
+    });
+  }
+
+  renderDeals(amazonDeals,   amazonList);
+  renderDeals(flipkartDeals, flipkartList);
+
+  winnerBanner.classList.add('visible');
+  winnerContent.innerHTML = `
+    <h2>${data.bestDeal.brand} — ${data.bestDeal.name}</h2>
+    <p>Lowest price found across all platforms</p>
+    <h3>&#8377;${data.bestDeal.price} <span style="font-size:1rem;color:var(--grey-2)">on ${data.bestDeal.platform}</span></h3>
+    <a class="winner-buy" href="${data.bestDeal.link}" target="_blank" rel="noopener">Buy Now &#8594;</a>`;
+}
+
+function runSearch() {
+  const query = document.getElementById('product-search').value.trim();
+  if (!query) return;
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true; btn.textContent = 'Searching…';
+  setTimeout(() => {
+    const data = getFullPriceComparison(query);
+    if (!data) {
+      document.getElementById('amazon-results').innerHTML   = `<div class="state-msg">No results for "${query}"</div>`;
+      document.getElementById('flipkart-results').innerHTML = `<div class="state-msg">No results for "${query}"</div>`;
+      document.getElementById('best-deal-banner').classList.remove('visible');
+    } else {
+      displayResults(data);
+    }
+    btn.disabled = false; btn.textContent = 'Find Best Price';
+  }, 600);
+}
+
+function quickSearch(term) {
+  document.getElementById('product-search').value = term;
+  runSearch();
+}
+
+document.getElementById('search-btn').addEventListener('click', runSearch);
+document.getElementById('product-search').addEventListener('keypress', e => { if (e.key === 'Enter') runSearch(); });
+</script>
+
+// ── Live API search ──────────────────────────────────────────
+async function getUniversalComparison(userQuery) {
+  // Amazon India via Rainforest API
+  const amazonPromise = fetch(
+    `https://api.rainforestapi.com/request?api_key=${RAINFOREST_KEY}&type=search&amazon_domain=amazon.in&search_term=${encodeURIComponent(userQuery)}`
+  )
+  .then(res => { if (!res.ok) throw new Error('Amazon API error'); return res.json(); })
+  .then(data => {
+    if (!data.search_results) return [];
+    return data.search_results.slice(0, 5).map(item => ({
+      platform : 'Amazon',
+      brand    : item.brand || extractBrand(item.title),
+      name     : item.title,
+      price    : item.price ? item.price.value : null,
+      link     : item.link,
+      image    : item.image,
+      rating   : item.rating ? item.rating + ' ★' : '—'
+    }));
+  })
+  .catch(() => []);   // fail gracefully
+
+  // Flipkart via Apify actor
+  const flipkartPromise = fetch(
+    `https://api.apify.com/v2/acts/aslisubhash~flipkart-price-tracker/run-sync-get-dataset-items?token=${APIFY_TOKEN}`,
+    {
+      method  : 'POST',
+      headers : { 'Content-Type': 'application/json' },
+      body    : JSON.stringify({ searchQueries: [userQuery] })
+    }
+  )
+  .then(res => { if (!res.ok) throw new Error('Flipkart API error'); return res.json(); })
+  .then(items => {
+    if (!Array.isArray(items)) return [];
+    return items.slice(0, 5).map(item => ({
+      platform : 'Flipkart',
+      brand    : item.brand || extractBrand(item.title),
+      name     : item.title,
+      price    : item.price ? parseFloat(String(item.price).replace(/[^0-9.]/g, '')) : null,
+      link     : item.url,
+      image    : item.thumbnails ? item.thumbnails[0] : null,
+      rating   : item.rating ? item.rating + ' ★' : '—'
+    }));
+  })
+  .catch(() => []);   // fail gracefully
+
+  const allResults = (await Promise.all([amazonPromise, flipkartPromise])).flat();
+  const validDeals = allResults.filter(item => item.price !== null && item.price > 0);
+
+  if (!validDeals.length) return null;
+
+  const bestDeal = validDeals.reduce((prev, curr) => prev.price < curr.price ? prev : curr);
+  return { allDeals: validDeals, bestDeal };
+}
+
+// Extract brand from title as fallback
+function extractBrand(title) {
+  if (!title) return 'Unknown';
+  return title.split(' ')[0];
+}
+
+// ── Display results ──────────────────────────────────────────
+function displayResults(data) {
+  const amazonList    = document.getElementById('amazon-results');
+  const flipkartList  = document.getElementById('flipkart-results');
+  const winnerBanner  = document.getElementById('best-deal-banner');
+  const winnerContent = document.getElementById('winner-content');
+  const amazonCount   = document.getElementById('amazon-count');
+  const flipkartCount = document.getElementById('flipkart-count');
+
+  amazonList.innerHTML   = '';
+  flipkartList.innerHTML = '';
+
+  const amazonDeals   = data.allDeals.filter(d => d.platform === 'Amazon');
+  const flipkartDeals = data.allDeals.filter(d => d.platform === 'Flipkart');
+  const lowestPrice   = data.bestDeal.price;
+
+  amazonCount.textContent   = amazonDeals.length   + ' results';
+  flipkartCount.textContent = flipkartDeals.length + ' results';
+
+  function renderDeals(deals, container) {
+    if (!deals.length) {
+      container.innerHTML = '<div class="state-msg">No results found</div>';
+      return;
+    }
+    deals.forEach(deal => {
+      const isBest = deal.price === lowestPrice;
+      const imgHtml = deal.image
+        ? `<img src="${deal.image}" alt="${deal.brand}" style="width:44px;height:44px;object-fit:contain;border:1px solid var(--border);margin-right:0.8rem;flex-shrink:0;">`
+        : '';
+      container.innerHTML += `
+        <a class="item-card" href="${deal.link}" target="_blank" rel="noopener">
+          ${imgHtml}
+          <div class="item-card-info">
+            <div class="item-card-brand">${deal.brand}</div>
+            <div class="item-card-name" title="${deal.name}">${deal.name.length > 45 ? deal.name.substring(0,45)+'…' : deal.name}</div>
+            <div class="item-card-rating">${deal.rating}</div>
+          </div>
+          <div class="item-card-price${isBest ? ' best' : ''}">&#8377;${deal.price.toLocaleString('en-IN')}</div>
+        </a>`;
+    });
+  }
+
+  renderDeals(amazonDeals,   amazonList);
+  renderDeals(flipkartDeals, flipkartList);
+
+  // Winner banner
+  winnerBanner.classList.add('visible');
+  const imgTag = data.bestDeal.image
+    ? `<img src="${data.bestDeal.image}" alt="${data.bestDeal.brand}" style="height:60px;object-fit:contain;margin-bottom:0.8rem;">`
+    : '';
+  winnerContent.innerHTML = `
+    ${imgTag}
+    <h2>${data.bestDeal.brand} — ${data.bestDeal.name.length > 60 ? data.bestDeal.name.substring(0,60)+'…' : data.bestDeal.name}</h2>
+    <p>Lowest price found across all platforms</p>
+    <h3>&#8377;${data.bestDeal.price.toLocaleString('en-IN')} <span style="font-size:1rem;color:var(--grey-2)">on ${data.bestDeal.platform}</span></h3>
+    <a class="winner-buy" href="${data.bestDeal.link}" target="_blank" rel="noopener">Buy Now &#8594;</a>`;
+}
+
+// ── Run search ───────────────────────────────────────────────
+async function runSearch() {
+  const query = document.getElementById('product-search').value.trim();
+  if (!query) return;
+
+  const btn = document.getElementById('search-btn');
+  btn.disabled    = true;
+  btn.textContent = 'Searching…';
+
+  // Show loading spinners
+  const spinner = `<div class="state-msg"><div class="loading-dots"><span></span><span></span><span></span></div></div>`;
+  document.getElementById('amazon-results').innerHTML   = spinner;
+  document.getElementById('flipkart-results').innerHTML = spinner;
+  document.getElementById('best-deal-banner').classList.remove('visible');
+
+  try {
+    const data = await getUniversalComparison(query);
+    if (!data) {
+      document.getElementById('amazon-results').innerHTML   = `<div class="state-msg">No results for "${query}"</div>`;
+      document.getElementById('flipkart-results').innerHTML = `<div class="state-msg">No results for "${query}"</div>`;
+    } else {
+      displayResults(data);
+    }
+  } catch (err) {
+    document.getElementById('amazon-results').innerHTML   = '<div class="state-msg">Search failed. Check your API keys.</div>';
+    document.getElementById('flipkart-results').innerHTML = '<div class="state-msg">Search failed. Check your API keys.</div>';
+    console.error(err);
+  }
+
+  btn.disabled    = false;
+  btn.textContent = 'Find Best Price';
+}
+
+function quickSearch(term) {
+  document.getElementById('product-search').value = term;
+  runSearch();
+}
+
+document.getElementById('search-btn').addEventListener('click', runSearch);
+document.getElementById('product-search').addEventListener('keypress', e => {
+  if (e.key === 'Enter') runSearch();
+});
+</script>
+</body>
+</html>

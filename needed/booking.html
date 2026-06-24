@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Barbro — Reserve Your Chair</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  /* ── BOOKING PAGE SPECIFIC ── */
+  .bk-page { min-height: 100vh; background: #000; padding: 6rem 2rem 4rem; }
+
+  .bk-header { text-align: center; margin-bottom: 3.5rem; }
+  .bk-eyebrow { font-size: 0.62rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .bk-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.5rem); color: var(--white); margin-bottom: 1.5rem; }
+  .bk-rule { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 0 auto; }
+
+  /* Table layout */
+  .bk-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); max-width: 1100px; margin: 0 auto 3rem; }
+
+  /* Column headers */
+  .bk-col-head { background: var(--surface); padding: 1.2rem 1.5rem; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid var(--border); }
+
+  /* Calendar column */
+  .bk-cal-cell { background: var(--surface); padding: 1.5rem; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+  .cal-month-year { font-family: var(--font-serif); font-size: 1rem; color: var(--white); }
+  .cal-nav { background: none; border: none; color: var(--gold); font-size: 1.5rem; cursor: pointer; padding: 0.2rem 0.4rem; line-height: 1; }
+  .cal-nav:hover { color: var(--gold-light); }
+  .cal-days-header { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; margin-bottom: 0.4rem; }
+  .cal-days-header span { font-size: 0.55rem; letter-spacing: 0.1em; color: var(--grey-3); padding: 0.4rem 0; text-transform: uppercase; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+  .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; cursor: pointer; color: var(--grey-1); transition: all 0.2s; }
+  .cal-day:hover:not(.disabled):not(.other-month) { background: var(--gold-dim); color: var(--gold); }
+  .cal-day.today { border: 1px solid var(--gold); color: var(--gold); }
+  .cal-day.selected { background: var(--gold); color: #000; font-weight: 700; }
+  .cal-day.other-month { color: var(--grey-3); opacity: 0.3; cursor: default; }
+  .cal-day.disabled { opacity: 0.18; cursor: not-allowed; pointer-events: none; }
+
+  /* Time slots column */
+  .bk-slots-cell { background: var(--surface); padding: 1.5rem; }
+  .bk-slots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .bk-slot { background: none; border: 1px solid var(--border); color: var(--grey-1); font-size: 0.75rem; padding: 0.65rem 0.5rem; cursor: pointer; transition: all 0.2s; font-family: var(--font-sans); text-align: center; }
+  .bk-slot:hover { border-color: var(--gold); color: var(--gold); }
+  .bk-slot.selected { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 600; }
+
+  /* Service dropdown column */
+  .bk-service-cell { background: var(--surface); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
+  .bk-select-wrap { position: relative; }
+  .bk-select-wrap::after { content: "▾"; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--gold); pointer-events: none; font-size: 0.8rem; }
+  .bk-select { width: 100%; background: var(--surface-2); border: 1px solid var(--border); color: var(--white); font-family: var(--font-sans); font-size: 0.82rem; padding: 0.9rem 2.5rem 0.9rem 1rem; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; transition: border-color 0.3s; }
+  .bk-select:focus { border-color: var(--gold); }
+  .bk-select option { background: var(--surface-2); color: var(--white); padding: 0.5rem; }
+
+  /* Selected service preview */
+  .bk-service-preview { border: 1px solid var(--border); padding: 1.2rem; display: none; flex-direction: column; gap: 0.5rem; }
+  .bk-service-preview.visible { display: flex; }
+  .bk-sp-name { font-family: var(--font-serif); font-size: 1.1rem; color: var(--white); }
+  .bk-sp-meta { display: flex; gap: 1rem; align-items: center; }
+  .bk-sp-price { font-family: var(--font-serif); font-size: 1.3rem; color: var(--gold); }
+  .bk-sp-dur { font-size: 0.68rem; color: var(--grey-3); letter-spacing: 0.1em; }
+
+  /* Summary + CTA */
+  .bk-summary-wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: start; }
+  .bk-summary { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; }
+  .bk-summary-title { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .bk-summary-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: var(--grey-2); }
+  .bk-summary-row:last-child { border-bottom: none; font-size: 0.9rem; font-weight: 600; }
+  .bk-summary-val { color: var(--white); }
+  .bk-summary-val.gold { color: var(--gold); }
+  .bk-cta-wrap { display: flex; flex-direction: column; gap: 1rem; align-items: flex-end; }
+  .bk-confirm-btn { font-size: 0.72rem; padding: 1rem 2.5rem; white-space: nowrap; }
+  .bk-back { font-size: 0.68rem; color: var(--grey-3); text-decoration: none; letter-spacing: 0.1em; text-align: center; }
+  .bk-back:hover { color: var(--gold); }
+
+  /* Confirmation screen */
+  .bk-confirm-screen { display: none; text-align: center; padding: 4rem 2rem; max-width: 600px; margin: 0 auto; }
+  .bk-confirm-screen.visible { display: block; }
+  .bk-confirm-icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #000; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-weight: 700; }
+  .bk-confirm-title { font-family: var(--font-serif); font-size: 2.5rem; color: var(--white); margin-bottom: 1rem; }
+  .bk-confirm-sub { color: var(--grey-2); font-size: 0.9rem; line-height: 1.7; margin-bottom: 2rem; }
+  .bk-confirm-details { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 1.5rem; margin-bottom: 2rem; text-align: left; }
+
+  @media (max-width: 768px) {
+    .bk-table { grid-template-columns: 1fr; }
+    .bk-summary-wrap { grid-template-columns: 1fr; }
+    .bk-cta-wrap { align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">BARBRO</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Login</a></li>
+    <li><a href="about.html" class="nav-link">About us</a></li>
+  </ul>
+  <a href="index.html" class="btn-outline-gold nav-cta" style="font-size:0.65rem;">&#8592; Back</a>
+</nav>
+
+<div class="bk-page" id="bk-main">
+
+  <div class="bk-header">
+    <p class="bk-eyebrow">Prebooking</p>
+    <h1 class="bk-title">Reserve Your Chair</h1>
+    <div class="bk-rule"></div>
+    <p id="bk-studio-line" style="display:none;margin-top:1rem;font-size:0.85rem;color:var(--grey-2);">
+      <span style="color:var(--gold);letter-spacing:0.15em;text-transform:uppercase;font-size:0.62rem;">Studio · </span>
+      <span id="bk-studio-name" style="color:var(--white);font-family:var(--font-serif);"></span>
+      <span id="bk-studio-address" style="display:block;font-size:0.75rem;color:var(--grey-3);margin-top:0.35rem;"></span>
+    </p>
+  </div>
+
+  <!-- 3-column table -->
+  <div class="bk-table">
+
+    <!-- Col 1: Calendar -->
+    <div class="bk-col-head">&#x1F4C5;&nbsp; Select Date</div>
+    <div class="bk-col-head">&#x1F550;&nbsp; Select Time</div>
+    <div class="bk-col-head">&#x2702;&nbsp; Select Service</div>
+
+    <div class="bk-cal-cell">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="bkChangeMonth(-1)">&#8249;</button>
+        <span class="cal-month-year" id="bk-cal-title"></span>
+        <button class="cal-nav" onclick="bkChangeMonth(1)">&#8250;</button>
+      </div>
+      <div class="cal-days-header">
+        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+      </div>
+      <div class="cal-grid" id="bk-cal-grid"></div>
+    </div>
+
+    <!-- Col 2: Time Slots -->
+    <div class="bk-slots-cell">
+      <div class="bk-slots-grid">
+        <button class="bk-slot" onclick="bkSelectSlot(this)">10:00 AM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">11:00 AM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">12:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">1:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">2:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">3:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">4:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">5:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">6:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">7:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">8:00 PM</button>
+        <button class="bk-slot" onclick="bkSelectSlot(this)">9:00 PM</button>
+      </div>
+    </div>
+
+    <!-- Col 3: Service Dropdown -->
+    <div class="bk-service-cell">
+      <div class="bk-select-wrap">
+        <select class="bk-select" id="bk-service-select" onchange="bkSelectService(this)">
+          <option value="">— Choose a service —</option>
+          <option value="haircut" data-price="$85" data-dur="60 min">Precision Haircut — $85 · 60 min</option>
+          <option value="beard"   data-price="$65" data-dur="45 min">Beard Architecture — $65 · 45 min</option>
+          <option value="shave"   data-price="$110" data-dur="75 min">Luxury Straight Shave — $110 · 75 min</option>
+          <option value="full"    data-price="$220" data-dur="2.5 hrs">The Full Experience — $220 · 2.5 hrs</option>
+        </select>
+      </div>
+      <div class="bk-service-preview" id="bk-service-preview">
+        <span class="bk-sp-name" id="bk-sp-name"></span>
+        <div class="bk-sp-meta">
+          <span class="bk-sp-price" id="bk-sp-price"></span>
+          <span class="bk-sp-dur" id="bk-sp-dur"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary + Confirm -->
+  <div class="bk-summary-wrap">
+    <div class="bk-summary">
+      <p class="bk-summary-title">Booking Summary</p>
+      <div class="bk-summary-row"><span>Studio</span><span class="bk-summary-val" id="sum-studio">—</span></div>
+      <div class="bk-summary-row"><span>Date</span><span class="bk-summary-val" id="sum-date">—</span></div>
+      <div class="bk-summary-row"><span>Time</span><span class="bk-summary-val" id="sum-time">—</span></div>
+      <div class="bk-summary-row"><span>Service</span><span class="bk-summary-val" id="sum-service">—</span></div>
+      <div class="bk-summary-row"><span>Total</span><span class="bk-summary-val gold" id="sum-price">—</span></div>
+    </div>
+    <div class="bk-cta-wrap">
+      <button class="btn-gold bk-confirm-btn" onclick="bkConfirm()">Confirm Booking</button>
+      <a href="index.html" class="bk-back">&#8592; Back to Home</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Confirmation Screen -->
+<div class="bk-confirm-screen" id="bk-confirm-screen">
+  <div class="bk-confirm-icon">&#10003;</div>
+  <h2 class="bk-confirm-title">You're Booked.</h2>
+  <p class="bk-confirm-sub">A confirmation has been sent to your email.<br/>We look forward to seeing you at Barbro.</p>
+  <div class="bk-confirm-details">
+    <div class="bk-summary-row"><span>Studio</span><span class="bk-summary-val" id="conf-studio"></span></div>
+    <div class="bk-summary-row"><span>Date</span><span class="bk-summary-val" id="conf-date"></span></div>
+    <div class="bk-summary-row"><span>Time</span><span class="bk-summary-val" id="conf-time"></span></div>
+    <div class="bk-summary-row"><span>Service</span><span class="bk-summary-val" id="conf-service"></span></div>
+    <div class="bk-summary-row"><span>Location</span><span class="bk-summary-val" id="conf-location"></span></div>
+  </div>
+  <a href="index.html" class="btn-gold" style="display:inline-block;">Back to Home</a>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-logo">BARBRO</div>
+  <p class="footer-tagline">Precision. Craft. Ritual.</p>
+  <p class="footer-copy">&#169; 2026 Barbro Studio. San Francisco, CA.</p>
+</footer>
+
+<script src="salon-selection.js"></script>
+<script>
+  (function initSelectedStudio() {
+    const shop = getSelectedSalon();
+    if (!shop || !shop.name) return;
+    const line = document.getElementById("bk-studio-line");
+    if (line) line.style.display = "block";
+    const nameEl = document.getElementById("bk-studio-name");
+    const addrEl = document.getElementById("bk-studio-address");
+    const sumStudio = document.getElementById("sum-studio");
+    const confStudio = document.getElementById("conf-studio");
+    const confLoc = document.getElementById("conf-location");
+    if (nameEl) nameEl.textContent = shop.name;
+    if (addrEl) addrEl.textContent = shop.address || "";
+    if (sumStudio) sumStudio.textContent = shop.name;
+    if (confStudio) confStudio.textContent = shop.name;
+    if (confLoc) confLoc.textContent = shop.address || "—";
+  })();
+</script>
+<script>
+  /* ── CALENDAR ── */
+  let bkYear = 2026, bkMonth = 4;
+  const BK_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function bkRenderCalendar() {
+    const grid  = document.getElementById('bk-cal-grid');
+    const title = document.getElementById('bk-cal-title');
+    title.textContent = BK_MONTHS[bkMonth] + ' ' + bkYear;
+    grid.innerHTML = '';
+    const firstDay     = new Date(bkYear, bkMonth, 1).getDay();
+    const daysInMonth  = new Date(bkYear, bkMonth + 1, 0).getDate();
+    const daysInPrev   = new Date(bkYear, bkMonth, 0).getDate();
+    const today        = new Date();
+
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const d = document.createElement('div');
+      d.className = 'cal-day other-month';
+      d.textContent = daysInPrev - i;
+      grid.appendChild(d);
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const el = document.createElement('div');
+      el.className = 'cal-day';
+      el.textContent = d;
+      const thisDate = new Date(bkYear, bkMonth, d);
+      if (thisDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) el.classList.add('disabled');
+      if (d === today.getDate() && bkMonth === today.getMonth() && bkYear === today.getFullYear()) el.classList.add('today');
+      el.addEventListener('click', function() {
+        document.querySelectorAll('#bk-cal-grid .cal-day').forEach(x => x.classList.remove('selected'));
+        this.classList.add('selected');
+        const label = BK_MONTHS[bkMonth] + ' ' + d + ', ' + bkYear;
+        document.getElementById('sum-date').textContent = label;
+        document.getElementById('conf-date').textContent = label;
+      });
+      grid.appendChild(el);
+    }
+    const total = firstDay + daysInMonth;
+    const rem   = total % 7 === 0 ? 0 : 7 - (total % 7);
+    for (let i = 1; i <= rem; i++) {
+      const d = document.createElement('div');
+      d.className = 'cal-day other-month';
+      d.textContent = i;
+      grid.appendChild(d);
+    }
+  }
+
+  function bkChangeMonth(dir) {
+    bkMonth += dir;
+    if (bkMonth > 11) { bkMonth = 0; bkYear++; }
+    if (bkMonth < 0)  { bkMonth = 11; bkYear--; }
+    bkRenderCalendar();
+  }
+
+  /* ── TIME SLOT ── */
+  function bkSelectSlot(el) {
+    document.querySelectorAll('.bk-slot').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('sum-time').textContent = el.textContent;
+    document.getElementById('conf-time').textContent = el.textContent;
+  }
+
+  /* ── SERVICE ── */
+  function bkSelectService(sel) {
+    const opt     = sel.options[sel.selectedIndex];
+    const preview = document.getElementById('bk-service-preview');
+    if (!sel.value) { preview.classList.remove('visible'); return; }
+    document.getElementById('bk-sp-name').textContent  = opt.text.split(' — ')[0];
+    document.getElementById('bk-sp-price').textContent = opt.dataset.price;
+    document.getElementById('bk-sp-dur').textContent   = opt.dataset.dur;
+    preview.classList.add('visible');
+    const name = opt.text.split(' — ')[0];
+    document.getElementById('sum-service').textContent = name;
+    document.getElementById('sum-price').textContent   = opt.dataset.price;
+    document.getElementById('conf-service').textContent = name;
+  }
+
+  /* ── CONFIRM ── */
+  function bkConfirm() {
+    const date    = document.getElementById('sum-date').textContent;
+    const time    = document.getElementById('sum-time').textContent;
+    const service = document.getElementById('sum-service').textContent;
+    if (date === '—' || time === '—' || service === '—') {
+      alert('Please select a date, time, and service before confirming.');
+      return;
+    }
+    document.getElementById('bk-main').style.display = 'none';
+    document.getElementById('bk-confirm-screen').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  bkRenderCalendar();
+</script>
+</body>
+</html>

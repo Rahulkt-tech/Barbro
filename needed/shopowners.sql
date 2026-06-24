@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS shopowners (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  shop_name TEXT NOT NULL,
+  location TEXT NOT NULL,
+  latitude REAL,
+  longitude REAL,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
